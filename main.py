@@ -1,5 +1,5 @@
 from urllib import response
-
+from bs4 import BeautifulSoup
 import requests
 import json
 import urllib
@@ -23,8 +23,6 @@ with urllib.request.urlopen(url) as response:
 
 title = re.findall(pattern, html)
 split_titles(title)
-
-
 
 
 # home_page = "https://www.sport5.co.il/"
