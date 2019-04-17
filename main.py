@@ -119,7 +119,6 @@ israeli_football = "https://www.sport5.co.il/world.aspx?FolderID=4439&lang=he"
 # world_football = "https://www.sport5.co.il/world.aspx?FolderID=4453&lang=he"
 # israeli_basketball = "https://www.sport5.co.il/world.aspx?FolderID=4467&lang=he"
 # nba = "https://nba.sport5.co.il/NBA.aspx?FolderId=402&lang=HE"
-#
 
 
 def get_all_titles_from_sport5(url, web="sport5", cat="israeli_footbal"):
@@ -130,16 +129,41 @@ def get_all_titles_from_sport5(url, web="sport5", cat="israeli_footbal"):
     dic = {}
     source = requests.get(url).text
     soup = BeautifulSoup(source)
+    content = soup.find('div', class_="content-block")
+    first_url = content.find('a')['href']
+    first_title = soup.find('div', class_="bomba-title").text
+    first_description = soup.find('div', class_="bomba-subtitle").text
+    article_sport5(first_url, first_title, web, cat)
+    title = content.findAll('li')
+    for con in title:
+        if not con.find('h2') is None:
+            title = con.find('h2').text
+            link = con.find('h2').find('a')['href']
+            dic[title] = link
+            article_sport5(link, title, web, cat)
+
     content = soup.findAll('div', class_="text-holder")
     for con in content:
         if not con.find('h2') is None:
             title = con.find('h2').text
             link = con.find('h2').find('a')['href']
             dic[title] = link
-            print(title + " - " + link)
-            article(link, title, web, cat)
+            article_sport5(link, title, web, cat)
 
 
+def article_sport5(url, title, web, cat):
+    """
+    :param url: current page
+    :return: the word in the article
+    """
+    source = requests.get(url).text
+    soup = BeautifulSoup(source)
+    try:
+        context = soup.find('div', id="find-article-content").text
+        counter_word.start(context, title)
+        handle_databases.insert_new_article(web, cat, title, url, context)
+    except:
+        print("Error !")
 
 
 def article_sport1(param):
@@ -169,22 +193,12 @@ def split_titles(titles):
     for title in titles:
         title_split = title.split("target=\"_self")
         if len(title_split) > 1:
-            article(str(title_split[0][1:len(title_split[0])-2]))
+            article_sport5(str(title_split[0][1:len(title_split[0])-2]))
         #else:
             article_sport1(title[1:len(title)-1])
 
 
-def article(url, title, web, cat):
-    """
-    :param url: current page
-    :return: the word in the article
-    """
-    source = requests.get(url).text
-    soup = BeautifulSoup(source)
-    context = soup.find('div', id="find-article-content").text
-    print(context)
-    counter_word.start(context, title)
-    handle_databases.insert_new_article(web, cat, title, url, context)
+
 
 
 def get_all_titles_from_sport1(url):

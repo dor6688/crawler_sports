@@ -36,7 +36,6 @@ def create_dictionary(cleaned_word_list, title):
         else:
             word_count[word] = 1
     for key,value in sorted(word_count.items(), key=operator.itemgetter(1), reverse=True):
-        print(key, value)
         handle_databases.data_entry(key, title, value)
 
 
