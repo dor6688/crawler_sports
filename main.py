@@ -1,9 +1,12 @@
 import re
 import urllib.request
 from tkinter import Tk
-# import gui
-# import counter_word
+import handle_databases
+import counter_word
 from tkinter import *
+
+import requests
+from bs4 import BeautifulSoup
 
 
 class gui:
@@ -97,17 +100,24 @@ israeli_football = "https://www.sport5.co.il/world.aspx?FolderID=4439&lang=he"
 #
 
 
-def get_all_titles_from_sport5(url):
+def get_all_titles_from_sport5(url, web="sport5", cat="israeli_footbal"):
     """
     :param url: get url page
     :return: all the title from current page
     """
+    dic = {}
+    source = requests.get(url).text
+    soup = BeautifulSoup(source)
+    content = soup.findAll('div', class_="text-holder")
+    for con in content:
+        if not con.find('h2') is None:
+            title = con.find('h2').text
+            link = con.find('h2').find('a')['href']
+            dic[title] = link
+            print(title + " - " + link)
+            article(link, title, web, cat)
 
-    regex = r'<h2><a href=(.+?)</a></h2>'  # split by this regex
-    pattern = re.compile(regex)
-    with urllib.request.urlopen(url) as response:
-        html = response.read().decode('utf-8')
-    return re.findall(pattern, html)  # find all the title between the regex
+
 
 
 def article_sport1(param):
@@ -142,20 +152,17 @@ def split_titles(titles):
             article_sport1(title[1:len(title)-1])
 
 
-def article(url):
+def article(url, title, web, cat):
     """
     :param url: current page
     :return: the word in the article
     """
-    lines = ""
-    regex = r'<P>(.+?)</P>'
-    pattern = re.compile(regex)
-    with urllib.request.urlopen(url) as response:
-        html = response.read().decode('utf-8')
-        article_lines = re.findall(pattern, html)
-        for line in article_lines:
-            lines += line
-        # counter_word.start(lines)
+    source = requests.get(url).text
+    soup = BeautifulSoup(source)
+    context = soup.find('div', id="find-article-content").text
+    print(context)
+    counter_word.start(context, title)
+    handle_databases.insert_new_article(web, cat, title, url, context)
 
 
 def get_all_titles_from_sport1(url):
@@ -175,9 +182,26 @@ def get_all_titles_from_sport1(url):
     return clear_list
 
 
-url = "https://sport1.maariv.co.il/israeli-soccer"
+def get_article_from_url(url):
+    source = requests.get(url).text
+    soup = BeautifulSoup(source)
+    print(soup.find('div', id="find-article-content").text)
+
+
+url = "https://www.sport5.co.il/"
+
+
+
+
+
 #titles = get_all_titles_from_sport1(israeli_football)
 titles = get_all_titles_from_sport5(israeli_football)
+for url in titles:
+    get_article_from_url(url)
+
+
+
+
 root = Tk()
 g = gui(root)
 root.mainloop()
