@@ -1,6 +1,5 @@
 import re
 import urllib.request
-from tkinter import Tk
 # import gui
 # import counter_word
 from tkinter import *
@@ -17,12 +16,12 @@ class gui:
         root.geometry("300x370+{}+{}".format(position_right, position_down))
         root.resizable(0, 0)
         text_subject = Label(root, text="Subject:")
-        subject = Entry(root)
+        self.subject_entry = Entry(root)
         button1 = Button(text="Sport5", fg='black', command=lambda: self.sport_five())
         button2 = Button(text="Sport1", fg='black', command=lambda: self.sport_one())
         button3 = Button(text="One", fg='black', command=lambda: self.one_sport())
         text_subject.grid(row=0, column=1)
-        subject.grid(row=1, column=1)
+        self.subject_entry.grid(row=1, column=1)
         button1.grid(row=2, column=0)
         button2.grid(row=2, column=1)
         button3.grid(row=2, column=2)
@@ -34,19 +33,23 @@ class gui:
         self.text_status.grid(row=3, column=1)
         self.website = ''
         self.category = ''
+        self.subject = ''
 
     def sport_five(self):
         self.website = "Sport5"
+        self.subject = self.subject_entry.get()
         self.open_category_window()
         print("Sport5")
 
     def sport_one(self):
         self.website = "Sport1"
+        self.subject = self.subject_entry.get()
         self.open_category_window()
         print("Sport1")
 
     def one_sport(self):
         self.website = "One"
+        self.subject = self.subject_entry.get()
         self.open_category_window()
         print("One")
 
@@ -61,6 +64,7 @@ class gui:
         category_window.geometry("200x300+{}+{}".format(position_right, position_down))
         self.status_text_string.set("Working on category...")
         self.text_status.config(fg="Red")
+        category_window.title("Category Window")
         sport_button1 = Button(category_window, text="Israeli Football", fg='black',
                                command=lambda: self.set_category("Israeli Football"))
         sport_button2 = Button(category_window, text="International Football", fg='black',
@@ -85,7 +89,24 @@ class gui:
         window.destroy()
         self.status_text_string.set("The results coming...")
         self.text_status.config(fg="green")
+        self.open_result_window()
 
+    def open_result_window(self):
+        result_window = Toplevel(root)
+        window_width = 200
+        window_height = 300
+        position_right = int(result_window.winfo_screenwidth() / 2 - window_width / 2)
+        position_down = int(result_window.winfo_screenheight() / 2 - window_height / 2)
+        result_window.geometry("200x300+{}+{}".format(position_right, position_down))
+        result_window.title("Your Results")
+
+        result_window.resizable(0, 0)
+        label_website = Label(result_window, text="Website:%s" % self.website)
+        label_website.grid(row=0, column=1)
+        label_category = Label(result_window, text="Category:%s" % self.category)
+        label_category.grid(row=1, column=1)
+        label_subject = Label(result_window, text="Subject:%s" % self.subject)
+        label_subject.grid(row=2, column=1)
 # subject.get give us the user query
 # home_page = "https://www.sport5.co.il/"
 
@@ -175,11 +196,11 @@ def get_all_titles_from_sport1(url):
     return clear_list
 
 
-url = "https://sport1.maariv.co.il/israeli-soccer"
-#titles = get_all_titles_from_sport1(israeli_football)
-titles = get_all_titles_from_sport5(israeli_football)
 root = Tk()
 g = gui(root)
 root.mainloop()
+url = "https://sport1.maariv.co.il/israeli-soccer"
+#titles = get_all_titles_from_sport1(israeli_football)
+titles = get_all_titles_from_sport5(israeli_football)
 # split_titles(titles)
 
