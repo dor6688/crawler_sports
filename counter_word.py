@@ -1,48 +1,31 @@
-import requests
 from bs4 import BeautifulSoup
-import operator
-import handle_databases
-#import database_web
-
-word_count = {}
+from handle_databases import *
+from collections import Counter
 
 
 def start(text, title):
-    word_list = []
-    soup = BeautifulSoup(text)
+    soup = BeautifulSoup(text, features="html.parser")
     content = soup.text
-    words = content.split(" ")
-    for each_word in words:
-        word_list.append(each_word)
-    clean_up(word_list, title)
+    clean_text = clean_symbols(content)
+    create_dictionary(clean_text, title)
 
 
-def clean_up(word_list, title):
-    cleaned_word_list = []
-    for word in word_list:
-        symbols = "!@#$%^&*(){}[]\"<>?/'.;`_=+-:|,"
-        for i in range(0, len(symbols)):
-            word = word.replace(symbols[i], "")
-        if len(word) > 0:
-            cleaned_word_list.append(word)
-    create_dictionary(cleaned_word_list, title)
+def clean_symbols(text):
+    symbols = "!@#$%^&*(){}[]\"<>?/'.;`_=+-:|,"
+    for char in symbols:
+        text = text.replace(char, "")
+    text = text.replace('\n', " ")
+    return clean_stop_words(text)
+
+
+def clean_stop_words(text):
+    stop_words = ["", '', "לא", "את", "של", "עם", "הוא", "היא", "זה", "אבל", "אני", "יש", "כל", "רק", "בין", "מי",
+                  "הייתי", "איך", "עוד", "על", "ללא", "אלא", "גם", "או", "שלי", "מה", "היה", "הם", "אם", "אנחנו", "אחרי"]
+    words = text.split(" ")
+    clean_stop = list(filter(lambda current_word: not stop_words.__contains__(current_word), words))
+    return clean_stop
 
 
 def create_dictionary(cleaned_word_list, title):
-    global word_count
-    for word in cleaned_word_list:
-        if word in word_count:
-            word_count[word] += 1
-        else:
-            word_count[word] = 1
-    for key,value in sorted(word_count.items(), key=operator.itemgetter(1), reverse=True):
-        handle_databases.data_entry(key, title, value)
-
-
-
-
-#start("צצכק חעח חעח חעח חלחל חלל חלל חלל חלל ממ מי מו מה")
-#create_databases.create_table()
-#create_databases.data_entry(word_count)
-
-
+    word_count = Counter(cleaned_word_list)
+    data_entry(word_count, title)
