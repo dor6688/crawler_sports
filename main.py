@@ -87,14 +87,17 @@ def article_sport5(url_page, title, desc, web, cat):
     :param cat: category of the article
     :return: the word in the article
     """
-    source = requests.get(url).text
+    source = requests.get(url_page).text
     soup = BeautifulSoup(source, features="html.parser")
     try:
-        context = soup.find('div', id="find-article-content").text
+        if 'play' in url_page:
+            context = soup.find('div', class_="article-content").text
+        else:
+            context = soup.find('div', id="find-article-content").text
         counter_word.start(context, title)
         insert_new_article(web, cat, title, desc, url_page, context)
     except:
-        print("Error !")
+        print("Error !  " + url_page)
 
 
 # itay here
