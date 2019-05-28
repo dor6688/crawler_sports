@@ -68,7 +68,7 @@ def search_article(title):
         print(e)
 
 
-def is_title_exist(title):
+def is_title_exist(title): 
     connect()
     try:
         cur.execute('SELECT COUNT(*) FROM Article WHERE TITLE = ?', (title,))
