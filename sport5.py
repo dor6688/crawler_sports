@@ -57,7 +57,6 @@ def main_title(content, soup, web, cat):
                 print("Found new article in " + web + " category : " + cat)
                 print("Main : " + title + " " + desc)
                 article_sport5(first_url, title, desc, web, cat, date, time)
-                create_new_article(web, cat, title)
                 return 1
             else:
                 return 0
@@ -76,7 +75,6 @@ def main_title(content, soup, web, cat):
                 print("Found new article in " + web + " category : " + cat)
                 print("Main : " + title + " " + desc)
                 article_sport5(first_url, title, desc, web, cat, date, time)
-                create_new_article(web, cat, title)
                 return 1
             else:
                 return 0
@@ -101,7 +99,6 @@ def second_titles(content, web, cat):
                     print("Found new article in " + web + " category : " + cat)
                     print(title_page + " " + desc_page)
                     article_sport5(link_page, title_page, desc_page, web, cat, date, time)
-                    create_new_article(web, cat, title_page)
                     count += 1
     return count
 
@@ -122,7 +119,6 @@ def third_titles(soup, web, cat):
                     print("Found new article in " + web + " category : " + cat)
                     print(title + " " + desc)
                     article_sport5(link, title, desc, web, cat, date, time)
-                    create_new_article(web, cat, title)
                     count += 1
     return count
 
