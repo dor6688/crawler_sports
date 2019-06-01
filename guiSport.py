@@ -1,10 +1,15 @@
+import threading
 from tkinter import *
+from tkinter import messagebox
 
 from PIL import ImageTk, Image
 
 from handle_databases import *
 import webbrowser
-# from main import *
+from main_sport import update_all
+
+global all_new_article
+all_new_article = 0
 
 
 def search_titles_database(web, category, subject):
@@ -39,12 +44,16 @@ def choose_title(evt):
         title_selected['text'] = title_click
         description_select['text'] = information_about_title[0][0]
         url_selected['text'] = information_about_title[0][1]
-        # write_article_textarea(information_about_title[0][2])
 
 
 def refresh():
-    print(5)
-    #update_articles()
+    global all_new_article
+    if all_new_article > 0:
+        messagebox.showinfo("New Article", "Found " + str(all_new_article) + " new articles :\nSport5 : " +
+                            str(notification_sport5) + "\n" + "Sport1 : " + str(notification_sport1) + "\n" +
+                            "ONE : " + str(notification_one))
+    all_new_article = 0
+    update_btn_text()
 
 
 subject_click = ""
@@ -149,13 +158,19 @@ web2.config(image=photo_sport1)
 web3.config(image=photo_one)
 
 
-refresh_button = Button(root, text="Refresh", fg='black', command=lambda: refresh())
+def update_btn_text(num=0):
+    btn_text.set(str(num))
+
+
+btn_text = StringVar()
+refresh_button = Button(root, text="Refresh", textvariable=btn_text, fg='black', command=lambda: refresh())
 title_selected = Label(root)
 description_select = Label(root, wraplength=400)
 url_selected = Label(root, fg="blue", cursor="hand2")
 url_selected.bind("<Button-1>", open_url)
 text_area = Text()
 text_button = Button(root, text="article", fg='black', command=lambda: window_article())
+
 
 
 # grid
@@ -182,5 +197,23 @@ description_select.grid(row=9, column=3, columnspan=2, sticky=E)
 url_selected.grid(row=10, column=3, columnspan=2, sticky=E)
 text_button.grid(row=15, column=2, columnspan=2)
 
+
+def notification_article():
+    global all_new_article
+    global notification_sport5
+    global notification_sport1
+    global notification_one
+    threading.Timer(120.0, notification_article).start()
+    count = update_all()
+    notification_sport5 = count[0]
+    notification_sport1 = count[1]
+    notification_one = count[2]
+    all_new_article += notification_sport5 + notification_sport1 + notification_one
+    update_btn_text(all_new_article)
+    print(count[0])
+    print(count[1])
+    print(count[2])
+
+notification_article()
 
 root.mainloop()

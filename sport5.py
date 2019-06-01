@@ -57,8 +57,13 @@ def main_title(content, soup, web, cat):
                 print("Found new article in " + web + " category : " + cat)
                 print("Main : " + title + " " + desc)
                 article_sport5(first_url, title, desc, web, cat, date, time)
+                create_new_article(web, cat, title)
+                return 1
+            else:
+                return 0
         else:
             print(first_url)
+            return 0
     except:
         try:
             first_title = soup.find('div', class_="desc")
@@ -71,11 +76,17 @@ def main_title(content, soup, web, cat):
                 print("Found new article in " + web + " category : " + cat)
                 print("Main : " + title + " " + desc)
                 article_sport5(first_url, title, desc, web, cat, date, time)
+                create_new_article(web, cat, title)
+                return 1
+            else:
+                return 0
         except:
             print("Error in first article ")
+            return 0
 
 
 def second_titles(content, web, cat):
+    count = 0
     titles = content.findAll('li')
     for current_title in titles:
         if not current_title.find('h2') is None:
@@ -90,9 +101,13 @@ def second_titles(content, web, cat):
                     print("Found new article in " + web + " category : " + cat)
                     print(title_page + " " + desc_page)
                     article_sport5(link_page, title_page, desc_page, web, cat, date, time)
+                    create_new_article(web, cat, title_page)
+                    count += 1
+    return count
 
 
 def third_titles(soup, web, cat):
+    count = 0
     content = soup.findAll('div', class_="text-holder")
     for con in content:
         if not con.find('h2') is None:
@@ -107,6 +122,9 @@ def third_titles(soup, web, cat):
                     print("Found new article in " + web + " category : " + cat)
                     print(title + " " + desc)
                     article_sport5(link, title, desc, web, cat, date, time)
+                    create_new_article(web, cat, title)
+                    count += 1
+    return count
 
 
 def get_all_titles_from_sport5(url_page, web="sport5", cat="israeli_football"):
@@ -116,19 +134,23 @@ def get_all_titles_from_sport5(url_page, web="sport5", cat="israeli_football"):
     :param cat: sports category
     :return: all the title from current page
     """
+    count_new_article = 0
     source = requests.get(url_page).text
     soup = BeautifulSoup(source, features="html.parser")
     content = soup.find('div', class_="content-block")
-    main_title(content, soup, web, cat)
-    second_titles(content, web, cat)
-    third_titles(soup, web, cat)
+    count_new_article += main_title(content, soup, web, cat)
+    count_new_article += second_titles(content, web, cat)
+    count_new_article += third_titles(soup, web, cat)
+    return count_new_article
 
 
 def update_articles():
+    count_new_article_all = 0
     print("Start.. update article in sport5")
     for league in all_league_sport5:
-        get_all_titles_from_sport5(all_league_sport5[league], "sport5", league)
+        count_new_article_all += get_all_titles_from_sport5(all_league_sport5[league], "sport5", league)
     print("Finish.. update article in sport5\n")
+    return count_new_article_all
 
 
 

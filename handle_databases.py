@@ -14,15 +14,15 @@ def disconnect():
 
 def create_table_word():
     connect()
-    cur.execute('CREATE TABLE IF NOT EXISTS Word( WORD TEXT, TITLE TEXT, FREQ INTEGER, PRIMARY KEY("WORD","TITLE")) ')
-    cur.execute('CREATE TABLE IF NOT EXISTS Article(WEB TEXT, CATEGORY TEXT,TITLE TEXT,DESCRIPTION TEXT, URL TEXT,TEXT_ARTICLE TEXT, DATE_ARTICLE TEXT, TIME_ARTICLE TEXT, PRIMARY KEY("WEB","CATEGORY","TITLE"))')
+    cur.execute('CREATE TABLE IF NOT EXISTS Article(WEB TEXT, CATEGORY TEXT,TITLE TEXT,DESCRIPTION TEXT, URL TEXT,'
+                'TEXT_ARTICLE TEXT, DATE_ARTICLE TEXT, TIME_ARTICLE TEXT, PRIMARY KEY("WEB","CATEGORY","TITLE"))')
     disconnect()
 
 
-def data_entry(dict, title):
+def data_entry(dictionary, title):
     connect()
     try:
-        for key, value in dict.items():
+        for key, value in dictionary.items():
             cur.execute('INSERT INTO Word (WORD, TITLE, FREQ) VALUES (?, ?, ?)', (key, title, value))
         conn.commit()
         disconnect()
@@ -36,7 +36,7 @@ def insert_new_article(web_page, category_page, title_article, text_description,
         connect()
         cur.execute('INSERT INTO Article (WEB, CATEGORY, TITLE, DESCRIPTION, URL, TEXT_ARTICLE, DATE_ARTICLE, TIME_ARTICLE) '
                     'VALUES (?, ?, ?, ?, ?, ?, ?, ?)', (web_page, category_page, title_article, text_description,
-                                               url_article, text_article, date_article, time_article))
+                    url_article, text_article, date_article, time_article))
         conn.commit()
         disconnect()
     except sqlite3.Error as e:
@@ -47,13 +47,15 @@ def search_titles(web_page, category_page, subject):
     connect()
     try:
         subject = "%"+subject+"%"
-        cur.execute('SELECT TITLE FROM Article WHERE WEB = ? and CATEGORY = ? and TEXT_ARTICLE like ? ORDER BY date_article DESC, time_article DESC ', (web_page, category_page, subject, ))
+        cur.execute('SELECT TITLE FROM Article WHERE WEB = ? and CATEGORY = ? and TEXT_ARTICLE like ?'
+                    ' ORDER BY date_article DESC, time_article DESC ', (web_page, category_page, subject, ))
         titles = cur.fetchall()
         disconnect()
         return titles
 
     except sqlite3.Error as e:
         print(e)
+
 
 def get_all_articles_cat(web, cat):
     connect()
@@ -66,6 +68,7 @@ def get_all_articles_cat(web, cat):
 
     except sqlite3.Error as e:
         print(e)
+
 
 def search_article(title):
     connect()
@@ -92,6 +95,7 @@ def is_title_exist(title):
 
     except sqlite3.Error as e:
         print(e)
+
 
 create_table_word()
 

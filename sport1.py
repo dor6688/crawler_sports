@@ -23,6 +23,7 @@ def new_title(title):
 
 
 def second_titles(content, web, cat):
+    count = 0
     title = content.findAll('div', class_='col-xs-8 category-article-content')
     for con in title:
         if not con.find('span', class_='list-article-item-title').text is None:
@@ -36,10 +37,11 @@ def second_titles(content, web, cat):
                 split_post = post.split(" ")
                 date = split_post[len(split_post) - 2]
                 time = split_post[len(split_post) - 1]
-                dic[title] = link
                 print("Found new article in " + web + " category : " + cat)
                 print(title)
                 article_sport1(link, title, desc, web, cat, date, time)
+                count += 1
+    return count
 
 
 def main_title(content, soup, web, cat):
@@ -55,8 +57,12 @@ def main_title(content, soup, web, cat):
             print("Found new article in " + web + " category : " + cat)
             print("Main : " + title)
             article_sport1(first_url, title, desc, web, cat, date, time)
+            return 1
+        else:
+            return 0
     except:
         print("Error in first article")
+        return 0
 
 
 def get_all_titles_from_sport1(url_page, web="sport1", cat="israeli_football"):
@@ -66,13 +72,13 @@ def get_all_titles_from_sport1(url_page, web="sport1", cat="israeli_football"):
     :param cat: sports category
     :return: all the title from current page
     """
-    global dic
-    dic = {}
+    count_new_article = 0
     source = requests.get(url_page).text
     soup = BeautifulSoup(source, features="html.parser")
     content = soup.find('div', id="PositionDivInPage2")
-    main_title(content, soup, web, cat)
-    second_titles(content, web, cat)
+    count_new_article += main_title(content, soup, web, cat)
+    count_new_article += second_titles(content, web, cat)
+    return count_new_article
 
 
 def article_sport1(url_page, title, desc, web, cat, date, time):
@@ -94,7 +100,9 @@ def article_sport1(url_page, title, desc, web, cat, date, time):
 
 
 def update_articles():
+    count_new_article_all = 0
     print("Start.. update article in sport1")
     for league in all_league_sport1:
-        get_all_titles_from_sport1(all_league_sport1[league], "sport1", league)
+        count_new_article_all += get_all_titles_from_sport1(all_league_sport1[league], "sport1", league)
     print("Finish.. update article in sport1\n")
+    return count_new_article_all
