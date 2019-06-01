@@ -105,13 +105,16 @@ def window_article(event):
     scroll.config(command=text_entry.yview)
     text_entry.tag_configure('tag-right', justify='right')
     text_entry.pack()
-    if title_click is not None:
-        information_about_title = search_article(title_click)
-        article = information_about_title[0][2]
-        text_entry.config(state=NORMAL)
-        text_entry.delete(0.0, END)
-        text_entry.insert(END, article, 'tag-right')
-        text_entry.config(state=DISABLED)
+    try:
+        if title_click is not None:
+            information_about_title = search_article(title_click)
+            article = information_about_title[0][2]
+            text_entry.config(state=NORMAL)
+            text_entry.delete(0.0, END)
+            text_entry.insert(END, article, 'tag-right')
+            text_entry.config(state=DISABLED)
+    except:
+        pass
 
 root = Tk()
 
