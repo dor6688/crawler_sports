@@ -37,13 +37,16 @@ def choose_title(evt):
     global title_click
     # Note here that Tkinter passes an event object to onselect()
     w = evt.widget
-    index = int(w.curselection()[0])
-    title_click = w.get(index)
-    if not title_click == "":
-        information_about_title = search_article(title_click)
-        title_selected['text'] = title_click
-        description_select['text'] = information_about_title[0][0]
-        url_selected['text'] = information_about_title[0][1]
+    try:
+        index = int(w.curselection()[0])
+        title_click = w.get(index)
+        if not title_click == "":
+            information_about_title = search_article(title_click)
+            title_selected['text'] = title_click
+            description_select['text'] = information_about_title[0][0]
+            url_selected['text'] = information_about_title[0][1]
+    except:
+        pass
 
 
 def refresh():
@@ -87,7 +90,7 @@ def change_clicked(name):
 
 
 # open the text in a new window
-def window_article():
+def window_article(event):
     text_window = Toplevel(root)
     window_width = 200
     window_height = 300
@@ -111,31 +114,39 @@ def window_article():
         text_entry.config(state=DISABLED)
 
 root = Tk()
+
+
 window_width = 900
-window_height = 500
+window_height = 700
 position_right = int(root.winfo_screenwidth() / 2 - window_width / 2)
 position_down = int(root.winfo_screenheight() / 2 - window_height / 2)
+root.geometry("450x580+{}+{}".format(position_right, position_down))
 root.title("crawler_sport")
-root.resizable(position_right, 0)
-title_label = Label(root, text="חיפוש כתבות ספורט")
-text_subject = Label(root, text=" :נושא ")
-text_category = Label(root, text=" :תחום ")
-text_web = Label(root, text=" :אתר ")
-text_titles = Label(root, text=" :כותרות ")
-text_titles_select = Label(root, text=" :נבחר ")
-text_description_select = Label(root, text=" :תאור ")
-text_url_select = Label(root, text=" :url ")
 
-data_subject = StringVar()
-subject_search = Entry(root, textvariable=data_subject)
+top_frame = Frame(root)
+top_frame.pack(side=TOP, pady=20)
+
+title_label = Label(top_frame, text="חיפוש כתבות ספורט", font=("Helvetica", 18))
+title_label.pack(side=TOP)
+
+second_top_frame = Frame(root)
+second_top_frame.pack(side=TOP)
+
+text_category = Label(second_top_frame, text=" :תחום ", font=("Ariel", 14))
+text_category.grid(row=0, column=4, pady=10)
+
+subject1 = Checkbutton(second_top_frame, text="כדורגל ישראלי", command=lambda: change_clicked("כדורגל ישראלי"))
+subject2 = Checkbutton(second_top_frame, text="כדורגל עולמי", command=lambda: change_clicked("כדורגל עולמי"))
+subject3 = Checkbutton(second_top_frame, text="כדורסל ישראלי", command=lambda: change_clicked("כדורסל ישראלי"))
+subject4 = Checkbutton(second_top_frame, text="NBA", command=lambda: change_clicked("NBA"))
+
+subject1.grid(row=0, column=3)
+subject2.grid(row=0, column=2)
+subject3.grid(row=0, column=1)
+subject4.grid(row=0, column=0)
 
 
-subject1 = Checkbutton(root, text="כדורגל ישראלי", command=lambda: change_clicked("כדורגל ישראלי"))
-subject2 = Checkbutton(root, text="כדורגל עולמי", command=lambda: change_clicked("כדורגל עולמי"))
-subject3 = Checkbutton(root, text="כדורסל ישראלי", command=lambda: change_clicked("כדורסל ישראלי"))
-subject4 = Checkbutton(root, text="NBA", command=lambda: change_clicked("NBA"))
-
-listbox = Listbox(root, width=80, height=10)
+# image on the button
 width = 50
 height = 50
 img_sport1 = Image.open('sport1.jpeg')
@@ -148,54 +159,75 @@ photo_sport1 = ImageTk.PhotoImage(img_sport1)
 photo_sport5 = ImageTk.PhotoImage(img_sport5)
 photo_one = ImageTk.PhotoImage(img_one)
 
-listbox.bind('<<ListboxSelect>>', choose_title)
-web1 = Button(root, text="Sport5", fg='black', command=lambda: search_titles_database('sport5', subject_click, subject_search.get()))
-web2 = Button(root, text="Sport1", fg='black', command=lambda: search_titles_database('sport1', subject_click, subject_search.get()))
-web3 = Button(root, text="ONE", fg='black', command=lambda: search_titles_database('one', subject_click, subject_search.get()))
+text_web = Label(second_top_frame, text=" :אתר ", font=("Ariel", 14))
+
+web1 = Button(second_top_frame, text="Sport5", fg='black', command=lambda: search_titles_database('sport5', subject_click, subject_search.get()))
+web2 = Button(second_top_frame, text="Sport1", fg='black', command=lambda: search_titles_database('sport1', subject_click, subject_search.get()))
+web3 = Button(second_top_frame, text="ONE", fg='black', command=lambda: search_titles_database('one', subject_click, subject_search.get()))
 
 web1.config(image=photo_sport5)
 web2.config(image=photo_sport1)
 web3.config(image=photo_one)
 
+text_web.grid(row=1, column=4)
+web1.grid(row=1, column=3)
+web2.grid(row=1, column=2)
+web3.grid(row=1, column=1)
+
+third_top_frame = Frame(root)
+third_top_frame.pack(side=TOP)
+
+text_subject = Label(second_top_frame, text=" :נושא ", font=("Ariel", 14))
+text_subject.grid(row=2, column=4, pady=10)
+data_subject = StringVar()
+subject_search = Entry(second_top_frame, textvariable=data_subject, width=50)
+subject_search.grid(row=2, column=0, columnspan=5)
+
+center_frame = Frame(root)
+center_frame.pack(side=TOP)
+
+listbox = Listbox(center_frame, width=60, height=10)
+listbox.bind('<<ListboxSelect>>', choose_title)
+listbox.bind('<Double-1>', window_article)
+listbox.pack()
+
+bottom_frame = Frame(root)
+bottom_frame.pack(side=TOP)
+
+
+text_titles_select = Label(bottom_frame, text=" :נבחר ")
+text_titles_select.pack()
+
+title_selected = Label(bottom_frame, font='Helvetica 12 bold')
+title_selected.pack()
+
+bottom_second_frame = Frame(root)
+bottom_second_frame.pack(side=TOP)
+
+text_description_select = Label(bottom_second_frame, text=" :תאור ")
+text_description_select.pack()
+
+description_select = Label(bottom_second_frame, wraplength=420)
+description_select.pack()
+
+bottom_third_frame = Frame(root)
+bottom_third_frame.pack(side=TOP)
+
+text_url_select = Label(bottom_third_frame, text=" :url ")
+text_url_select.pack()
+
+url_selected = Label(bottom_third_frame, fg="blue", cursor="hand2")
+url_selected.bind("<Button-1>", open_url)
+url_selected.pack()
+
 
 def update_btn_text(num=0):
-    btn_text.set(str(num))
+    btn_text.set("New article : " + str(num))
 
 
 btn_text = StringVar()
 refresh_button = Button(root, text="Refresh", textvariable=btn_text, fg='black', command=lambda: refresh())
-title_selected = Label(root)
-description_select = Label(root, wraplength=400)
-url_selected = Label(root, fg="blue", cursor="hand2")
-url_selected.bind("<Button-1>", open_url)
-text_area = Text()
-text_button = Button(root, text="article", fg='black', command=lambda: window_article())
-
-
-
-# grid
-title_label.grid(columnspan=5)
-text_subject.grid(row=1, column=5)
-refresh_button.grid(row=1, column=0)
-text_category.grid(row=2, column=5)
-text_web.grid(row=3, column=5)
-text_titles.grid(row=4, column=5)
-text_url_select.grid(row=10, column=5)
-subject_search.grid(row=1, column=4)
-subject1.grid(row=2, column=4)
-subject2.grid(row=2, column=3)
-subject3.grid(row=2, column=2)
-subject4.grid(row=2, column=1)
-web1.grid(row=3, column=4)
-web2.grid(row=3, column=3)
-web3.grid(row=3, column=2)
-listbox.grid(row=4, column=2, columnspan=3, rowspan=4, sticky=E)
-text_titles_select.grid(row=8, column=5)
-text_description_select.grid(row=9, column=5)
-title_selected.grid(row=8, column=3, columnspan=2, sticky=E)
-description_select.grid(row=9, column=3, columnspan=2, sticky=E)
-url_selected.grid(row=10, column=3, columnspan=2, sticky=E)
-text_button.grid(row=15, column=2, columnspan=2)
+refresh_button.pack(side=BOTTOM)
 
 
 def notification_article():
@@ -215,5 +247,5 @@ def notification_article():
     print(count[2])
 
 notification_article()
-
+root.resizable(0, 0)
 root.mainloop()

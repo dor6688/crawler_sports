@@ -47,8 +47,9 @@ def search_titles(web_page, category_page, subject):
     connect()
     try:
         subject = "%"+subject+"%"
-        cur.execute('SELECT TITLE FROM Article WHERE WEB = ? and CATEGORY = ? and TEXT_ARTICLE like ?'
-                    ' ORDER BY date_article DESC, time_article DESC ', (web_page, category_page, subject, ))
+        cur.execute('SELECT TITLE FROM Article WHERE WEB = ? and CATEGORY = ? and (TEXT_ARTICLE like ? or TITLE like ?'
+                    'or DESCRIPTION like ?) '
+                    ' ORDER BY date_article DESC, time_article DESC ', (web_page, category_page, subject, subject, subject))
         titles = cur.fetchall()
         disconnect()
         return titles

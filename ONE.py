@@ -52,10 +52,6 @@ def second_titles(content, web, cat):
                 link = url + con.find('a')['href'][1:]
                 print("Found new article in " + web + " category : " + cat)
                 print(title)
-
-                if title == 'בפיינל פור מכבי ת"א תצטרך לצמצם את הרוטציה':
-                    x=4
-
                 article_sport_one(link, title, desc, web, cat)
                 count += 1
     return count
