@@ -13,6 +13,12 @@ all_new_article = 0
 
 
 def search_titles_database(web, category, subject):
+    """
+    This method search titles from the database
+    :param web: The selected web site
+    :param category: The selected category
+    :param subject: The selected subject
+    """
     if not category == "":
         titles = search_titles(web, category, subject)
         insert_titles(titles)
@@ -21,6 +27,10 @@ def search_titles_database(web, category, subject):
 
 
 def insert_titles(new_titles):
+    """
+    This method insert titles to the list box
+    :param new_titles: The titles that adding
+    """
     listbox.delete(0, END)
     # need here to rank the titles
     for title in new_titles:
@@ -30,10 +40,18 @@ def insert_titles(new_titles):
 
 
 def open_url(event):
+    """
+    This method open the url web site
+    :param event: Click on the selected url
+    """
     webbrowser.open_new(event.widget.cget("text"))
 
 
 def choose_title(evt):
+    """
+    This method control of showing the data of a selected title
+    :param evt: Click on the selected title
+    """
     global title_click
     # Note here that Tkinter passes an event object to onselect()
     w = evt.widget
@@ -50,6 +68,9 @@ def choose_title(evt):
 
 
 def refresh():
+    """
+    This method control of updating titles
+    """
     global all_new_article
     if all_new_article > 0:
         messagebox.showinfo("New Article", "Found " + str(all_new_article) + " new articles :\nSport5 : " +
@@ -63,6 +84,10 @@ subject_click = ""
 
 
 def change_clicked(name):
+    """
+    This method control of chosen category
+    :param name:The chosen category
+    """
     global subject_click
     if subject1['text'] == name:
         subject1.select()
@@ -91,6 +116,10 @@ def change_clicked(name):
 
 # open the text in a new window
 def window_article(event):
+    """
+    This method control of the text window
+    :param event: Click twice on the selected title
+    """
     text_window = Toplevel(root)
     window_width = 200
     window_height = 300
@@ -115,6 +144,7 @@ def window_article(event):
             text_entry.config(state=DISABLED)
     except:
         pass
+
 
 root = Tk()
 
@@ -225,6 +255,10 @@ url_selected.pack()
 
 
 def update_btn_text(num=0):
+    """
+    This method write on the update button the number of the new articles that added
+    :param num: Number of added articles
+    """
     btn_text.set("New article : " + str(num))
 
 
@@ -234,6 +268,9 @@ refresh_button.pack(side=BOTTOM)
 
 
 def notification_article():
+    """
+    This method control the crawler timer
+    """
     global all_new_article
     global notification_sport5
     global notification_sport1
@@ -248,6 +285,7 @@ def notification_article():
     print(count[0])
     print(count[1])
     print(count[2])
+
 
 notification_article()
 root.resizable(0, 0)

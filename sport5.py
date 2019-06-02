@@ -10,12 +10,12 @@ israeli_basketball = "https://www.sport5.co.il/world.aspx?FolderID=4467&lang=he"
 nba = "https://nba.sport5.co.il/NBA.aspx?FolderId=402&lang=HE"
 
 all_league_sport5 = {"israeli_football": israeli_football, "world_football": world_football,
-              "israeli_basketball": israeli_basketball, "nba": nba}
-
+                     "israeli_basketball": israeli_basketball, "nba": nba}
 
 
 def new_title(title):
     """
+    This method check if this is new title
     :param title: get new title from web
     :return: true if this title is exist in database, false otherwise
     """
@@ -24,12 +24,14 @@ def new_title(title):
 
 def article_sport5(url_page, title, desc, web, cat, date, time):
     """
-    :param url_page: current page
-    :param title: title of article
-    :param desc: description of article
-    :param web: web of the article
-    :param cat: category of the article
-    :return: the word in the article
+    This method insert the new article
+    :param url_page: The current url
+    :param title: The current title
+    :param desc: The current subtitle
+    :param web: The chosen web site
+    :param cat: The chosen category
+    :param date: The date of the article
+    :param time: The time of the article
     """
     source = requests.get(url_page).text
     soup = BeautifulSoup(source, features="html.parser")
@@ -44,6 +46,14 @@ def article_sport5(url_page, title, desc, web, cat, date, time):
 
 
 def main_title(content, soup, web, cat):
+    """
+    This method given the first title in the web site
+    :param content: The content of the given web site
+    :param soup: The content of the given web site after func beautiful soup
+    :param web: The chosen web site
+    :param cat: The chosen category
+    :return: Number that show if this is a new title and insert that to data base if necessary
+    """
     try:
         first_url = content.find('a')['href']
         if 'dayevents' not in first_url:
@@ -84,6 +94,13 @@ def main_title(content, soup, web, cat):
 
 
 def second_titles(content, web, cat):
+    """
+    This method given the other titles in the web site
+    :param content: The content of the given web site
+    :param web: The chosen web site
+    :param cat: The chosen category
+    :return: Number that count the new articles and insert that to data base if necessary
+    """
     count = 0
     titles = content.findAll('li')
     for current_title in titles:
@@ -104,6 +121,13 @@ def second_titles(content, web, cat):
 
 
 def third_titles(soup, web, cat):
+    """
+    This method given the other titles in the web site
+    :param soup: The content of the given web site after func beautiful soup
+    :param web: The chosen web site
+    :param cat: The chosen category
+    :return: Number that count the new articles and insert that to data base if necessary
+    """
     count = 0
     content = soup.findAll('div', class_="text-holder")
     for con in content:
@@ -125,10 +149,11 @@ def third_titles(soup, web, cat):
 
 def get_all_titles_from_sport5(url_page, web="sport5", cat="israeli_football"):
     """
-    :param url_page: get url page
-    :param web: which web
-    :param cat: sports category
-    :return: all the title from current page
+    This method control of getting the article from this web site
+    :param url_page: Url of the main web site
+    :param web: The chosen web site
+    :param cat: The chosen category
+    :return: Number of all the title from current page
     """
     count_new_article = 0
     source = requests.get(url_page).text
@@ -141,12 +166,13 @@ def get_all_titles_from_sport5(url_page, web="sport5", cat="israeli_football"):
 
 
 def update_articles():
+    """
+    This method control update article of this web site
+    :return: Number of new articles
+    """
     count_new_article_all = 0
     print("Start.. update article in sport5")
     for league in all_league_sport5:
         count_new_article_all += get_all_titles_from_sport5(all_league_sport5[league], "sport5", league)
     print("Finish.. update article in sport5\n")
     return count_new_article_all
-
-
-

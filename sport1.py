@@ -3,7 +3,6 @@ import requests
 from bs4 import BeautifulSoup
 
 
-
 url = "https://sport1.maariv.co.il/"
 israeli_football = "https://sport1.maariv.co.il/israeli-soccer"
 world_football = "https://sport1.maariv.co.il/World-football"
@@ -16,6 +15,7 @@ all_league_sport1 = {"israeli_football": israeli_football, "world_football": wor
 
 def new_title(title):
     """
+    This method check if this is new title
     :param title: get new title from web
     :return: true if this title is exist in database, false otherwise
     """
@@ -23,6 +23,13 @@ def new_title(title):
 
 
 def second_titles(content, web, cat):
+    """
+    This method given the other titles in the web site
+    :param content: The content of the given web site
+    :param web: The chosen web site
+    :param cat: The chosen category
+    :return: Number that count the new articles and insert that to data base if necessary
+    """
     count = 0
     title = content.findAll('div', class_='col-xs-8 category-article-content')
     for con in title:
@@ -45,6 +52,14 @@ def second_titles(content, web, cat):
 
 
 def main_title(content, soup, web, cat):
+    """
+    This method given the first title in the web site
+    :param content: The content of the given web site
+    :param soup: The content of the given web site after func beautiful soup
+    :param web: The chosen web site
+    :param cat: The chosen category
+    :return: Number that show if this is a new title and insert that to data base if necessary
+    """
     try:
         first_url = content.find('a')['href']
         first_title = soup.find('div', class_="row category-article category-main-article")
@@ -67,10 +82,11 @@ def main_title(content, soup, web, cat):
 
 def get_all_titles_from_sport1(url_page, web="sport1", cat="israeli_football"):
     """
-    :param url_page: get url page
-    :param web: which web
-    :param cat: sports category
-    :return: all the title from current page
+    This method control of getting the article from this web site
+    :param url_page: Url of the main web site
+    :param web: The chosen web site
+    :param cat: The chosen category
+    :return: Number of all the title from current page
     """
     count_new_article = 0
     source = requests.get(url_page).text
@@ -83,12 +99,14 @@ def get_all_titles_from_sport1(url_page, web="sport1", cat="israeli_football"):
 
 def article_sport1(url_page, title, desc, web, cat, date, time):
     """
-    :param url_page: current page
-    :param title: title of article
-    :param desc: description of article
-    :param web: web of the article
-    :param cat: category of the article
-    :return: the word in the article
+    This method insert the new article
+    :param url_page: The current url
+    :param title: The current title
+    :param desc: The current subtitle
+    :param web: The chosen web site
+    :param cat: The chosen category
+    :param date: The date of the article
+    :param time: The time of the article
     """
     source = requests.get(url_page).text
     soup = BeautifulSoup(source, features="html.parser")
@@ -100,6 +118,10 @@ def article_sport1(url_page, title, desc, web, cat, date, time):
 
 
 def update_articles():
+    """
+    This method control update article of this web site
+    :return: Number of new articles
+    """
     count_new_article_all = 0
     print("Start.. update article in sport1")
     for league in all_league_sport1:
