@@ -121,11 +121,11 @@ def window_article(event):
     :param event: Click twice on the selected title
     """
     text_window = Toplevel(root)
-    window_width = 200
-    window_height = 300
+    window_width = 450
+    window_height = 450
     position_right = int(text_window.winfo_screenwidth() / 2 - window_width / 2)
     position_down = int(text_window.winfo_screenheight() / 2 - window_height / 2)
-    text_window.geometry("400x400+{}+{}".format(position_right, position_down))
+    text_window.geometry("450x450+{}+{}".format(position_right, position_down))
     close_button = Button(text_window, text="Close", width="8", command=lambda: text_window.destroy())
     close_button.pack()
     scroll = Scrollbar(text_window, orient="vertical")
